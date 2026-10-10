@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ROS2基础与功能包</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="ros2-%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B">ROS2 基础入门教程</h1>
+<h2 id="%E4%B8%80ros2-%E7%AE%80%E4%BB%8B">一、ROS2 简介</h2>
+<h3 id="11-%E4%BB%80%E4%B9%88%E6%98%AFros2">1.1 什么是ROS2</h3>
+<ul>
+<li>Robot Operating System 2（机器人操作系统）</li>
+<li>模块化通信中间件 + 机器人开发工具集</li>
+<li>核心特性：
+<ul>
+<li>实时性支持（基于DDS通信协议）</li>
+<li>跨平台（Linux/Windows/macOS/RTOS）</li>
+<li>分布式系统</li>
+<li>多语言支持（Python/C++/Java等）</li>
+</ul>
+</li>
+</ul>
+<h3 id="12-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8-ros2">1.2 为什么要用 ROS2？</h3>
+<p>在机器人开发中，硬件复杂、传感器繁多、软件模块众多。<br>
+如果我们直接用 C++ 写底层驱动、通信逻辑，会面临以下问题：</p>
+<ul>
+<li><strong>通信复杂</strong>：传感器和控制器之间的数据传递需要自己写 socket、串口、共享内存等。</li>
+<li><strong>模块耦合度高</strong>：代码越写越庞大，难以扩展和维护。</li>
+<li><strong>跨平台困难</strong>：不同操作系统、不同硬件上需要重复修改。</li>
+<li><strong>复用性差</strong>：别人写好的激光雷达驱动或定位算法，很难直接接入。</li>
+</ul>
+<p>ROS2 的出现就是为了解决这些痛点：</p>
+<ul>
+<li><strong>提供标准通信机制</strong>（话题、服务、动作） → 模块之间像乐高一样拼接。</li>
+<li><strong>跨平台支持</strong>（Linux、Windows、嵌入式 RTOS） → 一份代码多处运行。</li>
+<li><strong>生态丰富</strong>（现成的驱动包、算法库） → 节省大量开发时间。</li>
+<li><strong>实时性更好</strong>（基于 DDS 通信） → 满足机器人实际需求。</li>
+</ul>
+<hr>
+<h3 id="13-ros2-%E4%B8%8E%E5%BA%95%E5%B1%82%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E6%9E%B6%E6%9E%84%E7%9A%84%E5%85%B3%E7%B3%BB">1.3 ROS2 与底层代码实现架构的关系</h3>
+<p>我们可以把 ROS2 理解为一层“中间件”：</p>
+<ul>
+<li>
+<p><strong>最底层：硬件 &amp; 驱动</strong><br>
+电机、传感器、摄像头 → 用 C/C++ 驱动直接操作。</p>
+</li>
+<li>
+<p><strong>中间层：ROS2 框架</strong><br>
+用 C++ 封装通信接口（rclcpp），提供话题/服务/动作的标准 API。<br>
+这一层解决“模块之间怎么交流”的问题。</p>
+</li>
+<li>
+<p><strong>上层：应用逻辑</strong><br>
+定位、导航、视觉识别等算法模块，开发者用 C++ 或 Python 编写，直接调用 ROS2 API。</p>
+</li>
+</ul>
+<h3 id="14-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5">1.4 核心概念</h3>
+<ul>
+<li><strong>节点(Node)</strong>：执行单元</li>
+<li><strong>话题(Topic)</strong>：发布/订阅通信模式</li>
+<li><strong>服务(Service)</strong>：请求/响应模式</li>
+<li><strong>动作(Action)</strong>：长时任务通信协议</li>
+<li><strong>参数(Parameter)</strong>：动态配置</li>
+</ul>
+<h3 id="15-ros-2-%E6%9E%B6%E6%9E%84%E5%9B%BE%E8%AE%B2%E8%A7%A3-%E4%B8%8D%E7%94%A8%E5%90%AC%E6%87%82">1.5 ROS 2 架构图讲解 (不用听懂)</h3>
+<p><img src="/ros2框架图.png" alt="ros2 系统架构图"></p>
+<p>ROS 2 的架构可以分为 <strong>五层</strong>，从底层到顶层依次是：</p>
+<hr>
+<h4 id="1-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B1%82operating-system-layer">1. 操作系统层（Operating System Layer）</h4>
+<ul>
+<li>支持 Linux、Windows、macOS 等。</li>
+<li>提供最底层的进程管理、线程调度、网络通信等功能。</li>
+<li>ROS 2 并不替代操作系统，而是基于操作系统来运行。</li>
+</ul>
+<p><strong>类比：</strong><br>
+操作系统就像“城市的道路和电力系统”，提供最基础的运行环境。</p>
+<hr>
+<h4 id="2-dds-%E5%AE%9E%E7%8E%B0%E5%B1%82dds-implementation-layer">2. DDS 实现层（DDS Implementation Layer）</h4>
+<ul>
+<li>DDS（Data Distribution Service）是一种<strong>发布-订阅通信协议</strong>。</li>
+<li>ROS 2 并没有自己造轮子，而是调用现成的 DDS 实现，比如：
+<ul>
+<li>eProsima Fast DDS</li>
+<li>Eclipse Cyclone DDS</li>
+<li>RTI Connext DDS</li>
+</ul>
+</li>
+<li>不同 DDS 厂商的实现类似于“不同品牌的快递公司”。</li>
+</ul>
+<p><strong>类比：</strong><br>
+DDS 就像“快递网络”，负责把消息从一个地方送到另一个地方。</p>
+<hr>
+<h4 id="3-%E6%8A%BD%E8%B1%A1-dds-%E5%B1%82ros-middleware-interface-rmw">3. 抽象 DDS 层（ROS Middleware Interface, rmw）</h4>
+<ul>
+<li>由于 DDS 有多种实现，ROS 2 在 DDS 上面加了一层<strong>中间接口（rmw）</strong>。</li>
+<li>这样，上层开发者不需要关心具体用的是哪家 DDS，直接用 ROS API 就行。</li>
+<li>好处：<strong>屏蔽差异，统一接口</strong>。</li>
+</ul>
+<p><strong>类比：</strong><br>
+rmw 就像“华理快递柜的统一取件码系统”，不管你用顺丰还是圆通，取快递的方式都是一样的。</p>
+<hr>
+<h4 id="4-ros-2-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%B1%82ros-2-client-layer">4. ROS 2 客户端层（ROS 2 Client Layer）</h4>
+<ul>
+<li>提供开发者常用的编程接口（API），主要包括：
+<ul>
+<li><code>rclcpp</code>（C++ API）</li>
+<li><code>rclpy</code>（Python API）</li>
+<li>以及其他语言接口</li>
+</ul>
+</li>
+<li>这一层的核心是 <strong>ROS 2 Client Library (rcl)</strong>，用 C 实现，向上封装给不同语言。</li>
+</ul>
+<p><strong>类比：</strong><br>
+这一层就像“电话客服系统”：</p>
+<ul>
+<li>你用中文（Python）还是英文（C++）打电话都可以，客服会帮你转成统一的内部操作。</li>
+</ul>
+<hr>
+<h4 id="5-%E5%BA%94%E7%94%A8%E5%B1%82application-layer">5. 应用层（Application Layer）</h4>
+<ul>
+<li>最上层是开发者写的 <strong>用户代码（ROS 2 Nodes）</strong>。</li>
+<li>包含具体的功能模块，例如：
+<ul>
+<li>激光雷达驱动节点</li>
+<li>定位算法节点</li>
+<li>导航控制节点</li>
+</ul>
+</li>
+<li>这些节点之间通过话题、服务、动作来通信。</li>
+</ul>
+<p><strong>类比：</strong><br>
+应用层就像“快递寄件人和收件人”，我们写的节点就是寄件人/收件人，信息通过 DDS 快递系统传递。</p>
+<h2 id="%E4%BA%8C-ros-2-%E5%B7%A5%E4%BD%9C%E7%A9%BA%E9%97%B4%E6%9E%B6%E6%9E%84">二、 ROS 2 工作空间架构</h2>
+<h3 id="21-ros-2-%E5%B7%A5%E4%BD%9C%E7%A9%BA%E9%97%B4%E6%9E%B6%E6%9E%84">2.1. ROS 2 工作空间架构</h3>
+<p>ROS 2 的开发通常在 <strong>工作空间（workspace）</strong> 中完成。<br>
+一个标准的 ROS 2 工作空间目录结构如下：</p>
+<pre class="hljs"><code><div>ros2_ws/ # 工作空间根目录
+├── src/ # 源代码目录（存放各个工作包）
+│ ├── first_package/ # 示例工作包
+│ └── ...
+├── install/ # 编译后安装目录（生成的可执行文件、头文件等）
+├── build/ # 编译的中间文件
+└── log/ # 日志文件
+</div></code></pre>
+<h3 id="22-%E4%BD%BF%E7%94%A8cpp%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E5%8C%85%E5%B9%B6%E7%BC%96%E8%AF%91">2.2 使用cpp创建工作包并编译</h3>
+<h4 id="221-%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E5%8C%85">2.2.1 创建工作包</h4>
+<p>在 ROS 2 中，<strong>工作包（package）</strong> 是最小的功能单元。<br>
+一个机器人系统由多个包组成，每个包负责一个功能（比如激光雷达驱动、路径规划，之间使用话题、行为、服务进行通信）。<br>
+<br>
+创建工作包的命令：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 进入工作空间的 src/ 目录</span>
+mkdir -p ~/teach/teach_ws/src &amp;&amp; <span class="hljs-built_in">cd</span> ~/teach/teach_ws/src
+
+<span class="hljs-comment"># 创建一个新的工作包</span>
+ros2 pkg create first_package --build-type ament_cmake --dependencies rclcpp
+</div></code></pre>
+<p>这里：</p>
+<ul>
+<li>
+<p><code>first_package</code> 是包名。</p>
+</li>
+<li>
+<p><code>--build-type ament_cmake</code> 表示使用 CMake 构建（常用于 C++）。</p>
+</li>
+<li>
+<p><code>--dependencies rclcpp</code> 表示依赖 rclcpp 库（ROS 2 C++ 客户端库）。</p>
+</li>
+</ul>
+<p>创建完成后，工作空间的结构大概是：</p>
+<pre class="hljs"><code><div>ros2_ws/ # 工作空间根目录
+├── src/ # 源代码目录（存放各个工作包）
+│ ├── first_package/
+| |     ├── CMakeLists.txt    # 构建规则
+| |     ├── package.xml       # 包的描述信息
+| |     └── src/              # 源代码存放目录
+│ └── ...
+├── install/ # 编译后安装目录（生成的可执行文件、头文件等）
+├── build/ # 编译的中间文件
+└── log/ # 日志文件
+
+</div></code></pre>
+<h4 id="222-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AAnode">2.2.2 创建一个node</h4>
+<p>节点（Node） 是 ROS 2 程序的基本执行单元。
+例如：一个激光雷达节点、一个导航节点、一个摄像头节点。</p>
+<p>在刚才的 <code>first_package/src/</code>里新建一个 C++ 文件 <code>my_node.cpp</code>：</p>
+<pre class="hljs"><code><div><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">"rclcpp/rclcpp.hpp"</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyNode</span> :</span> <span class="hljs-keyword">public</span> rclcpp::Node {
+<span class="hljs-keyword">public</span>:
+    MyNode() : Node(<span class="hljs-string">"my_node"</span>) {
+        RCLCPP_INFO(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"Hello ROS2 Node!"</span>);
+    }
+};
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> **argv)</span> </span>{
+    rclcpp::init(argc, argv);
+    rclcpp::spin(<span class="hljs-built_in">std</span>::make_shared&lt;MyNode&gt;());
+    rclcpp::shutdown();
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</div></code></pre>
+<p>然后修改 CMakeLists.txt，加入：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">add_executable</span>(my_node src/my_node.cpp)
+ament_target_dependencies(my_node rclcpp)
+<span class="hljs-keyword">install</span>(TARGETS my_node DESTINATION lib/<span class="hljs-variable">${PROJECT_NAME}</span>)
+</div></code></pre>
+<p>编译并运行：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 回到工作空间根目录</span>
+<span class="hljs-built_in">cd</span> ~/teach/teach_ws
+
+<span class="hljs-comment"># 编译工作空间</span>
+colcon build
+
+<span class="hljs-comment"># 进入新环境</span>
+<span class="hljs-built_in">source</span> install/setup.bash
+
+<span class="hljs-comment"># 运行节点</span>
+ros2 run first_package my_node
+</div></code></pre>
+<p>运行结果：</p>
+<pre class="hljs"><code><div>[INFO] [xxxx] [my_node]: Hello ROS2 Node!
+</div></code></pre>
+<h3 id="23-%E4%BD%BF%E7%94%A8-python-%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E5%8C%85%E5%B9%B6%E7%BC%96%E8%AF%91">2.3 使用 Python 创建工作包并编译</h3>
+<h4 id="231-%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E5%8C%85">2.3.1 创建工作包</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># 进入工作空间的 src/ 目录</span>
+<span class="hljs-built_in">cd</span> ~/teach/teach_ws/src
+
+<span class="hljs-comment"># 创建一个新的工作包（Python版）</span>
+ros2 pkg create first_py_package --build-type ament_python --dependencies rclpy
+</div></code></pre>
+<p>这里：</p>
+<ul>
+<li><code>first_py_package</code> 是包名。</li>
+<li><code>--build-type ament_python</code> 表示使用 Python 构建。</li>
+<li><code>--dependencies rclpy</code> 表示依赖 rclpy 库（ROS 2 Python 客户端库）。</li>
+</ul>
+<p>创建完成后，目录结构大概是：</p>
+<pre class="hljs"><code><div>ros2_ws/
+├── src/
+│   ├── first_py_package/
+│   │   ├── package.xml        # 包的描述信息
+│   │   ├── setup.py           # Python 安装脚本
+│   │   ├── resource/          # 资源文件
+│   │   └── first_py_package/  # Python 源码目录
+│   │       └── __init__.py
+│   └── ...
+├── install/
+├── build/
+└── log/
+</div></code></pre>
+<hr>
+<h4 id="232-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-node">2.3.2 创建一个 Node</h4>
+<p>在 <code>first_py_package/first_py_package/</code> 下新建 <code>my_node.py</code> 文件：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> rclpy
+<span class="hljs-keyword">from</span> rclpy.node <span class="hljs-keyword">import</span> Node
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyNode</span><span class="hljs-params">(Node)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self)</span>:</span>
+        super().__init__(<span class="hljs-string">"my_py_node"</span>)
+        self.get_logger().info(<span class="hljs-string">"Hello ROS2 Python Node!"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">(args=None)</span>:</span>
+    rclpy.init(args=args)
+    node = MyNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    main()
+</div></code></pre>
+<hr>
+<p>在 <code>setup.py</code> 中加入入口：</p>
+<pre class="hljs"><code><div>entry_points={
+    <span class="hljs-string">'console_scripts'</span>: [
+        <span class="hljs-string">'my_node = first_py_package.my_node:main'</span>,
+    ],
+},
+</div></code></pre>
+<hr>
+<p>编译并运行</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 回到工作空间根目录</span>
+<span class="hljs-built_in">cd</span> ~/teach/teach_ws
+
+<span class="hljs-comment"># 编译工作空间</span>
+colcon build
+
+<span class="hljs-comment"># 进入新环境</span>
+<span class="hljs-built_in">source</span> install/setup.bash
+
+<span class="hljs-comment"># 运行节点</span>
+ros2 run first_py_package my_node
+</div></code></pre>
+<p>运行结果：</p>
+<pre class="hljs"><code><div>[INFO] [xxxx] [my_py_node]: Hello ROS2 Python Node!
+</div></code></pre>
+<h1 id="%E4%BA%94%E4%B8%8D%E5%90%8C%E7%BA%A7%E5%88%AB%E7%9A%84%E6%97%A5%E5%BF%97%E8%BE%93%E5%87%BA">五、不同级别的日志输出</h1>
+<table>
+<thead>
+<tr>
+<th>日志级别</th>
+<th>宏名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>INFO</strong></td>
+<td><code>RCLCPP_INFO</code></td>
+<td>输出一般信息，帮助开发者了解程序的状态。</td>
+</tr>
+<tr>
+<td><strong>WARN</strong></td>
+<td><code>RCLCPP_WARN</code></td>
+<td>输出警告信息，提醒潜在问题，通常不影响执行。</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td><code>RCLCPP_ERROR</code></td>
+<td>输出错误信息，通常会影响程序的执行。</td>
+</tr>
+<tr>
+<td><strong>FATAL</strong></td>
+<td><code>RCLCPP_FATAL</code></td>
+<td>输出致命错误，通常会导致节点崩溃或停止运行。</td>
+</tr>
+<tr>
+<td><strong>DEBUG</strong></td>
+<td><code>RCLCPP_DEBUG</code></td>
+<td>输出调试信息，帮助开发者跟踪程序执行过程。</td>
+</tr>
+<tr>
+<td><strong>TRACE</strong></td>
+<td><code>RCLCPP_TRACE</code></td>
+<td>最详细的日志信息，适用于深度调试，记录每个细节。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="%E7%A4%BA%E4%BE%8B">示例</h2>
+<pre class="hljs"><code><div>RCLCPP_INFO(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is an info log."</span>);
+RCLCPP_WARN(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is a warning log."</span>);
+RCLCPP_ERROR(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is an error log."</span>);
+RCLCPP_FATAL(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is a fatal log."</span>);
+RCLCPP_DEBUG(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is a debug log."</span>);
+RCLCPP_TRACE(<span class="hljs-keyword">this</span>-&gt;get_logger(), <span class="hljs-string">"This is a trace log."</span>);
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment"># INFO log</span>
+self.get_logger().info(<span class="hljs-string">'This is an INFO log.'</span>)
+<span class="hljs-comment"># WARN log</span>
+self.get_logger().warn(<span class="hljs-string">'This is a WARN log.'</span>)
+<span class="hljs-comment"># ERROR log</span>
+self.get_logger().error(<span class="hljs-string">'This is an ERROR log.'</span>)
+<span class="hljs-comment"># FATAL log</span>
+self.get_logger().fatal(<span class="hljs-string">'This is a FATAL log.'</span>)
+<span class="hljs-comment"># DEBUG log</span>
+self.get_logger().debug(<span class="hljs-string">'This is a DEBUG log.'</span>)
+<span class="hljs-comment"># TRACE log</span>
+self.get_logger().trace(<span class="hljs-string">'This is a TRACE log.'</span>)
+</div></code></pre>
+<h1 id="%E5%9B%9Bros-2-node-%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%8C%87%E4%BB%A4">四、ROS 2 Node 相关命令行指令</h1>
+<p>除了编写节点代码以外，还需要熟悉常用的命令行工具来操作和调试节点。</p>
+<hr>
+<h2 id="1-%E5%90%AF%E5%8A%A8%E8%8A%82%E7%82%B9">1. 启动节点</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># 运行某个包里的节点</span>
+ros2 run &lt;package_name&gt; &lt;executable_name&gt;
+</div></code></pre>
+<p>示例：</p>
+<pre class="hljs"><code><div>ros2 run first_package my_node
+ros2 run first_py_package my_node
+</div></code></pre>
+<hr>
+<h2 id="2-%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9">2. 查看节点</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># 列出当前运行的所有节点</span>
+ros2 node list
+</div></code></pre>
+<p>输出示例：</p>
+<pre class="hljs"><code><div>/my_node
+/my_py_node
+</div></code></pre>
+<hr>
+<h2 id="3-%E6%9F%A5%E7%9C%8B%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF">3. 查看节点信息</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># 查看某个节点的详细信息（话题、服务、参数等）</span>
+ros2 node info /my_node
+</div></code></pre>
+<p>输出示例：</p>
+<pre class="hljs"><code><div>/my_node
+  Subscribers:
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+  Publishers:
+    /rosout: rcl_interfaces/msg/Log
+  Services:
+    /my_node/get_parameter_types
+    /my_node/list_parameters
+</div></code></pre>
+<h2 id="4-%E5%8F%82%E6%95%B0%E7%9B%B8%E5%85%B3">4. 参数相关</h2>
+<pre class="hljs"><code><div><span class="hljs-comment"># 列出节点的参数</span>
+ros2 param list
+
+<span class="hljs-comment"># 查看某个参数的值</span>
+ros2 param get /my_node param_name
+
+<span class="hljs-comment"># 设置某个参数</span>
+ros2 param <span class="hljs-built_in">set</span> /my_node param_name value
+</div></code></pre>
+<h1 id="%E5%9B%9Bros-2-%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%8A%9F%E8%83%BD%E5%8C%85%E8%8A%82%E7%82%B9%E6%80%BB%E7%BB%93">四、ROS 2 命名空间、功能包、节点总结</h1>
+<hr>
+<h2 id="41-%E5%88%9B%E5%BB%BA%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E6%96%B9%E5%BC%8F">4.1 创建命名空间的方式</h2>
+<pre class="hljs"><code><div>mkdir -p &lt;命名空间名&gt;/src/
+<span class="hljs-built_in">cd</span> &lt;命名空间名&gt;/src/
+</div></code></pre>
+<hr>
+<h2 id="42-%E5%88%9B%E5%BB%BA%E5%8A%9F%E8%83%BD%E5%8C%85%E7%9A%84%E6%96%B9%E5%BC%8F">4.2 创建功能包的方式</h2>
+<h3 id="1-python-%E5%8A%9F%E8%83%BD%E5%8C%85">1. Python 功能包</h3>
+<pre class="hljs"><code><div>ros2 pkg create &lt;包名&gt; --build-type ament_python --dependencies rclpy
+</div></code></pre>
+<h3 id="2-c-%E5%8A%9F%E8%83%BD%E5%8C%85">2. C++ 功能包</h3>
+<pre class="hljs"><code><div>ros2 pkg create &lt;包名&gt; --build-type ament_cmake --dependencies rclcpp
+</div></code></pre>
+<hr>
+<h2 id="43-%E7%BC%96%E5%86%99%E8%8A%82%E7%82%B9%E6%96%B9%E5%BC%8F">4.3 编写节点方式</h2>
+<p>通用流程：</p>
+<ol>
+<li>导入库文件</li>
+<li>初始化客户端库</li>
+<li>新建节点</li>
+<li><code>spin</code> 循环节点</li>
+<li>关闭客户端库</li>
+</ol>
+<h3 id="1-python-%E8%8A%82%E7%82%B9">1. Python 节点</h3>
+<p>在与 <code>__init__.py</code> 同级目录下创建 <code>x.py</code>。</p>
+<h4 id="setuppy-%E9%85%8D%E7%BD%AE">setup.py 配置</h4>
+<pre class="hljs"><code><div>entry_points={
+    <span class="hljs-string">'console_scripts'</span>: [
+        <span class="hljs-string">'&lt;节点名&gt; = &lt;包名&gt;.&lt;py文件名&gt;:main'</span>
+    ],
+},
+</div></code></pre>
+<hr>
+<h3 id="2-c-%E8%8A%82%E7%82%B9">2. C++ 节点</h3>
+<p>在 <code>src/</code> 下创建 <code>x.cpp</code> 文件。</p>
+<h4 id="cmakeliststxt-%E9%85%8D%E7%BD%AE">CMakeLists.txt 配置</h4>
+<pre class="hljs"><code><div><span class="hljs-keyword">find_package</span>(rclcpp REQUIRED)
+<span class="hljs-keyword">find_package</span>(&lt;依赖名&gt; REQUIRED)
+
+<span class="hljs-keyword">add_executable</span>(&lt;节点名&gt; src/&lt;cpp文件名&gt;.cpp)
+ament_target_dependencies(&lt;节点名&gt; rclcpp &lt;依赖名&gt;)
+
+<span class="hljs-keyword">install</span>(TARGETS
+  &lt;节点名&gt;
+  DESTINATION lib/<span class="hljs-variable">${PROJECT_NAME}</span>
+)
+</div></code></pre>
+<hr>
+<h2 id="44-%E7%BC%96%E8%AF%91%E5%8A%9F%E8%83%BD%E5%8C%85">4.4 编译功能包</h2>
+<blockquote>
+<p>注意：必须返回到 <code>src</code> 的上一级目录（工作空间根目录）。</p>
+</blockquote>
+<pre class="hljs"><code><div>colcon build
+<span class="hljs-built_in">source</span> install/setup.bash
+</div></code></pre>
+<hr>
+<h2 id="45-%E8%BF%90%E8%A1%8C%E8%8A%82%E7%82%B9">4.5 运行节点</h2>
+<pre class="hljs"><code><div>ros2 run &lt;包名&gt; &lt;节点名&gt;
+</div></code></pre>
+
+</body>
+</html>
