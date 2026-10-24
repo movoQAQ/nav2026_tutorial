@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(robot_status_publisher)
+project(custom_msg_demo)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -9,6 +9,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
+add_executable(robot_status_publisher src/robot_status_publisher.cpp)
+ament_target_dependencies(robot_status_publisher rclcpp custom_interfaces)
+
+
+install(TARGETS
+  robot_status_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
