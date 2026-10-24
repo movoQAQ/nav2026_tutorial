@@ -1,0 +1,16 @@
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/lib/qos_demo/marker_publisher
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/ament_index/resource_index/package_run_dependencies/qos_demo
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/ament_index/resource_index/parent_prefix_path/qos_demo
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/environment/ament_prefix_path.sh
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/environment/ament_prefix_path.dsv
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/environment/path.sh
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/environment/path.dsv
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/local_setup.bash
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/local_setup.sh
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/local_setup.zsh
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/local_setup.dsv
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/package.dsv
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/ament_index/resource_index/packages/qos_demo
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/cmake/qos_demoConfig.cmake
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/cmake/qos_demoConfig-version.cmake
+/home/lyu/nav2026_tutorial/lecture3/task1/install/qos_demo/share/qos_demo/package.xml
