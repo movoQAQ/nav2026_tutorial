@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="description" content="ROS 2 Humble Launch 文件实践教程：Ubuntu 22.04，lecture2/task2，完整示例、彩色代码和离线复制。">
+<title>5.1 ROS 2 Launch 文件（Humble 实践）</title>
+<style>pre { line-height: 125%; }
+td.linenos .normal { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #666666; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.code-block .highlight .hll { background-color: #ffffcc }
+.code-block .highlight { background: #f0f0f0; }
+.code-block .highlight .c { color: #60A0B0; font-style: italic } /* Comment */
+.code-block .highlight .err { border: 1px solid #F00 } /* Error */
+.code-block .highlight .k { color: #007020; font-weight: bold } /* Keyword */
+.code-block .highlight .o { color: #666 } /* Operator */
+.code-block .highlight .ch { color: #60A0B0; font-style: italic } /* Comment.Hashbang */
+.code-block .highlight .cm { color: #60A0B0; font-style: italic } /* Comment.Multiline */
+.code-block .highlight .cp { color: #007020 } /* Comment.Preproc */
+.code-block .highlight .cpf { color: #60A0B0; font-style: italic } /* Comment.PreprocFile */
+.code-block .highlight .c1 { color: #60A0B0; font-style: italic } /* Comment.Single */
+.code-block .highlight .cs { color: #60A0B0; background-color: #FFF0F0 } /* Comment.Special */
+.code-block .highlight .gd { color: #A00000 } /* Generic.Deleted */
+.code-block .highlight .ge { font-style: italic } /* Generic.Emph */
+.code-block .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.code-block .highlight .gr { color: #F00 } /* Generic.Error */
+.code-block .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.code-block .highlight .gi { color: #00A000 } /* Generic.Inserted */
+.code-block .highlight .go { color: #888 } /* Generic.Output */
+.code-block .highlight .gp { color: #C65D09; font-weight: bold } /* Generic.Prompt */
+.code-block .highlight .gs { font-weight: bold } /* Generic.Strong */
+.code-block .highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.code-block .highlight .gt { color: #04D } /* Generic.Traceback */
+.code-block .highlight .kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.code-block .highlight .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.code-block .highlight .kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.code-block .highlight .kp { color: #007020 } /* Keyword.Pseudo */
+.code-block .highlight .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.code-block .highlight .kt { color: #902000 } /* Keyword.Type */
+.code-block .highlight .m { color: #40A070 } /* Literal.Number */
+.code-block .highlight .s { color: #4070A0 } /* Literal.String */
+.code-block .highlight .na { color: #4070A0 } /* Name.Attribute */
+.code-block .highlight .nb { color: #007020 } /* Name.Builtin */
+.code-block .highlight .nc { color: #0E84B5; font-weight: bold } /* Name.Class */
+.code-block .highlight .no { color: #60ADD5 } /* Name.Constant */
+.code-block .highlight .nd { color: #555; font-weight: bold } /* Name.Decorator */
+.code-block .highlight .ni { color: #D55537; font-weight: bold } /* Name.Entity */
+.code-block .highlight .ne { color: #007020 } /* Name.Exception */
+.code-block .highlight .nf { color: #06287E } /* Name.Function */
+.code-block .highlight .nl { color: #002070; font-weight: bold } /* Name.Label */
+.code-block .highlight .nn { color: #0E84B5; font-weight: bold } /* Name.Namespace */
+.code-block .highlight .nt { color: #062873; font-weight: bold } /* Name.Tag */
+.code-block .highlight .nv { color: #BB60D5 } /* Name.Variable */
+.code-block .highlight .ow { color: #007020; font-weight: bold } /* Operator.Word */
+.code-block .highlight .w { color: #BBB } /* Text.Whitespace */
+.code-block .highlight .mb { color: #40A070 } /* Literal.Number.Bin */
+.code-block .highlight .mf { color: #40A070 } /* Literal.Number.Float */
+.code-block .highlight .mh { color: #40A070 } /* Literal.Number.Hex */
+.code-block .highlight .mi { color: #40A070 } /* Literal.Number.Integer */
+.code-block .highlight .mo { color: #40A070 } /* Literal.Number.Oct */
+.code-block .highlight .sa { color: #4070A0 } /* Literal.String.Affix */
+.code-block .highlight .sb { color: #4070A0 } /* Literal.String.Backtick */
+.code-block .highlight .sc { color: #4070A0 } /* Literal.String.Char */
+.code-block .highlight .dl { color: #4070A0 } /* Literal.String.Delimiter */
+.code-block .highlight .sd { color: #4070A0; font-style: italic } /* Literal.String.Doc */
+.code-block .highlight .s2 { color: #4070A0 } /* Literal.String.Double */
+.code-block .highlight .se { color: #4070A0; font-weight: bold } /* Literal.String.Escape */
+.code-block .highlight .sh { color: #4070A0 } /* Literal.String.Heredoc */
+.code-block .highlight .si { color: #70A0D0; font-style: italic } /* Literal.String.Interpol */
+.code-block .highlight .sx { color: #C65D09 } /* Literal.String.Other */
+.code-block .highlight .sr { color: #235388 } /* Literal.String.Regex */
+.code-block .highlight .s1 { color: #4070A0 } /* Literal.String.Single */
+.code-block .highlight .ss { color: #517918 } /* Literal.String.Symbol */
+.code-block .highlight .bp { color: #007020 } /* Name.Builtin.Pseudo */
+.code-block .highlight .fm { color: #06287E } /* Name.Function.Magic */
+.code-block .highlight .vc { color: #BB60D5 } /* Name.Variable.Class */
+.code-block .highlight .vg { color: #BB60D5 } /* Name.Variable.Global */
+.code-block .highlight .vi { color: #BB60D5 } /* Name.Variable.Instance */
+.code-block .highlight .vm { color: #BB60D5 } /* Name.Variable.Magic */
+.code-block .highlight .il { color: #40A070 } /* Literal.Number.Integer.Long */
+
+:root {color-scheme: light; --bg:#f7f9fc;--surface:#fff;--ink:#233247;--muted:#687889;--accent:#285fc8;--accent-soft:#eef4ff;--line:#e4eaf2;--code:#f7f9fc;--shadow:0 12px 36px rgba(35,57,91,.055)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.site-head{border-bottom:1px solid var(--line);background:linear-gradient(130deg,#fff 40%,#f0f5ff 100%)}
+.head-inner{max-width:1280px;margin:auto;padding:40px 36px 36px}
+.eyebrow{font-size:12px;letter-spacing:.16em;color:var(--accent);font-weight:750;text-transform:uppercase}
+.site-head h1{font-size:clamp(27px,3.5vw,39px);letter-spacing:-.024em;line-height:1.4;margin:12px 0 10px;font-weight:770}
+.subtitle{margin:0;color:var(--muted);font-size:14px}
+.tech-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.tech-meta span{border:1px solid #dce5f4;border-radius:7px;background:rgba(255,255,255,.75);font-size:12px;color:#425572;padding:3px 10px;font-weight:600}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:42px;max-width:1280px;padding:32px 36px 80px;margin:0 auto;align-items:start}
+.toc-wrap{position:sticky;top:26px;max-height:calc(100vh - 52px);overflow-y:auto;scrollbar-width:thin}
+.toc-title{font-size:12px;text-transform:uppercase;letter-spacing:.14em;font-weight:750;color:#8b9bb1;margin:7px 0 14px 12px}
+.toc ul{list-style:none;margin:0;padding:0}.toc li{margin:2px 0}.toc a{display:block;border-left:2px solid transparent;border-radius:0 5px 5px 0;padding:7px 11px;color:#526177;font-size:13px;line-height:1.55;transition:color .15s,background .15s}
+.toc a.chapter{font-weight:650;color:#374c69}.toc .sub-nav{padding-left:12px}.toc .sub-nav a{font-size:12px;color:#708096;padding-top:5px;padding-bottom:5px}
+.toc a:hover,.toc a.active{color:var(--accent);background:var(--accent-soft);border-left-color:var(--accent);text-decoration:none}
+.content{min-width:0;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:13px;padding:38px clamp(22px,3.7vw,58px) 55px}
+.content h2,.content h3{scroll-margin-top:30px}.content h2{font-size:23px;line-height:1.5;letter-spacing:-.02em;font-weight:750;margin:54px 0 20px;padding:0 0 12px;border-bottom:1px solid var(--line)}
+.content h2:first-of-type{margin-top:30px}.content h3{font-size:17px;line-height:1.55;font-weight:730;margin:34px 0 12px}
+.content p{margin:11px 0 16px}.content ul,.content ol{padding-left:24px;margin:10px 0 17px}.content li{padding-left:3px;margin:5px 0}
+.content strong{font-weight:690;color:#243650}
+.context-panel{border:1px solid #dce7f7;border-left:4px solid #5380d4;border-radius:8px;background:#f7faff;padding:16px 19px;margin:0 0 22px;color:#455a76;font-size:13px}
+.context-panel p{margin:0;line-height:2}.context-panel strong{color:#283f65}
+.content code:not(pre code){background:#edf3fa;color:#c04374;border-radius:4px;padding:2px 5px;font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.9em;overflow-wrap:anywhere}
+.content table{border-collapse:collapse;width:100%;margin:20px 0 30px;display:table;font-size:14px}
+.content th{text-align:left;background:#f1f5fa;color:#334a6c;font-weight:700}.content th,.content td{border-bottom:1px solid var(--line);padding:11px 14px}.content tr:last-child td{border-bottom:none}
+.content blockquote:not(.context-panel){border-left:4px solid #c5d7ed;margin:22px 0;padding:10px 20px;background:#f7faff}
+.code-block{position:relative;margin:17px 0 23px;border:1px solid #dde6f0;background:var(--code);border-radius:9px;overflow:hidden}
+.code-toolbar{display:flex;justify-content:space-between;align-items:center;height:34px;padding:0 13px;background:#f0f4fa;border-bottom:1px solid #e3e9f2}
+.code-language{color:#63758c;letter-spacing:.045em;font-size:11px;font-weight:720}
+.copy-button{border:0;color:#5e7291;background:transparent;font:inherit;font-size:11px;cursor:pointer;padding:4px 7px;border-radius:5px}.copy-button:hover{color:var(--accent);background:#dfeafd}.copy-button.copied{color:#1e7848}
+.code-block .highlight{margin:0;padding:14px 17px 15px;overflow-x:auto;background:transparent}
+.code-block pre{margin:0;overflow:visible;background:transparent;color:#283449;tab-size:2;font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;font-size:12.65px;line-height:1.7;white-space:pre}
+.code-block .highlight .k,.code-block .highlight .kd,.code-block .highlight .kn,.code-block .highlight .kt{color:#9b27a7;font-weight:600}
+.code-block .highlight .s,.code-block .highlight .s1,.code-block .highlight .s2,.code-block .highlight .sa{color:#147e52}
+.code-block .highlight .c,.code-block .highlight .c1,.code-block .highlight .cm{color:#8594a5;font-style:italic}
+.code-block .highlight .nf,.code-block .highlight .fm{color:#215fc0}
+.code-block .highlight .nc,.code-block .highlight .nn{color:#176f9b;font-weight:550}
+.code-block .highlight .nb,.code-block .highlight .bp{color:#3754b0}
+.code-block .highlight .mi,.code-block .highlight .mf,.code-block .highlight .m{color:#a45b0a}
+.code-block .highlight .nt{color:#216cc3}.code-block .highlight .na{color:#a54a1d}.code-block .highlight .nv{color:#9b27a7}
+.code-block .highlight .n,.code-block .highlight .p{color:#29394f}
+.copy-source{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.chapter-footer{border-top:1px solid var(--line);padding-top:18px;margin-top:35px;font-size:12px;color:#91a0b3;text-align:right}
+.mobile-toc{display:none}
+@media (max-width:960px){.layout{grid-template-columns:205px minmax(0,1fr);gap:22px;padding:22px 20px 50px}.head-inner{padding:30px 20px}.content{padding:25px 27px 40px}.toc a{font-size:12px}}
+@media (max-width:720px){.layout{display:block;padding:13px 12px 50px}.desktop-toc{display:none}.mobile-toc{display:block;margin-bottom:12px}.mobile-toc details{border:1px solid var(--line);border-radius:8px;background:#fff;padding:5px 13px}.mobile-toc summary{cursor:pointer;font-size:13px;font-weight:700;padding:7px 0}.mobile-toc ul{list-style:none;padding:0 6px}.mobile-toc li{margin:4px 0}.mobile-toc a{font-size:13px}.content{padding:19px 20px 30px;border-radius:9px}.content h2{font-size:20px;margin-top:38px}.content h3{font-size:16px}.code-block pre{font-size:11.9px}.head-inner{padding:30px 20px 25px}}
+@media print{body{background:#fff;font-size:12px}.site-head{background:#fff}.head-inner{padding:10px 0 18px}.layout{display:block;padding:0}.content{border:0;box-shadow:none;padding:0}.desktop-toc,.mobile-toc,.copy-button{display:none!important}.code-block{break-inside:avoid}.code-block pre{font-size:9px;white-space:pre-wrap;overflow-wrap:anywhere}.content h2{break-after:avoid}}
+
+.lesson-details{border:1px solid #dce6f1;border-radius:9px;background:#fbfdff;margin:18px 0 23px;overflow:hidden}
+.lesson-details summary{cursor:pointer;font-weight:680;font-size:14px;color:#355b8b;padding:11px 16px;background:#f4f8fd}
+.lesson-details .detail-inner{padding:8px 17px 13px}.lesson-details h3{margin-top:25px}
+.content ul li strong{color:#25496f}
+@media print{.lesson-details:not([open]){display:none}}
+</style>
+</head>
+<body>
+<header class="site-head" id="page-top"><div class="head-inner">
+<div class="eyebrow">ROS 2 · Lecture 02 / Task 02</div>
+<h1>5.1 ROS 2 Launch 文件（实践）</h1>
+<p class="subtitle">从上一节自定义消息 Topic 过渡到批量启动 · 基于现有四包模板，逐步完成可执行 Launch</p>
+<div class="tech-meta"><span>Ubuntu 22.04</span><span>ROS 2 Humble</span><span>Python Launch</span><span>C++ / rclcpp</span><span>ament_cmake</span></div>
+</div></header>
+<div class="layout">
+<aside class="desktop-toc toc-wrap"><div class="toc-title">本节目录</div><nav aria-label="章节目录" class="toc"><ul><li><a class="chapter" href="#section-1">一、实验目标与 Launch 的作用</a></li><li><a class="chapter" href="#section-2">二、实验目录与上一节代码衔接</a><ul class="sub-nav"><li><a href="#section-3">发布者参考源码（可展开）</a></li><li><a href="#section-4">订阅者参考源码（可展开）</a></li></ul></li><li><a class="chapter" href="#section-5">三、补齐功能包配置（沿用已有模板）</a><ul class="sub-nav"><li><a href="#section-6">1. custom_interfaces：生成消息接口</a></li><li><a href="#section-7">2. 两个 C++ 节点包：注册并安装可执行文件</a></li><li><a href="#section-8">3. robot_status_bringup：安装 Launch 目录</a></li></ul></li><li><a class="chapter" href="#section-9">四、编写第一个能够运行的 Launch 文件</a><ul class="sub-nav"><li><a href="#section-10">1. 核心结构：LaunchDescription 与 Node</a></li><li><a href="#section-11">2. 编译并用 ros2 launch 启动</a></li></ul></li><li><a class="chapter" href="#section-12">五、运行结果与自检</a><ul class="sub-nav"><li><a href="#section-13">1. 另开终端查看节点和消息</a></li><li><a href="#section-14">2. 编译、运行常见问题</a></li></ul></li><li><a class="chapter" href="#section-15">六、Launch 参数与条件启动（必做改进）</a></li><li><a class="chapter" href="#section-16">七、TimerAction：延迟启动与顺序控制</a></li><li><a class="chapter" href="#section-17">八、Node 的常用配置：命名、命名空间和重映射</a><ul class="sub-nav"><li><a href="#section-18">1. 实验：两节点统一重映射</a></li><li><a href="#section-19">2. 选做：GroupAction + PushRosNamespace</a></li></ul></li><li><a class="chapter" href="#section-20">九、参数文件 YAML 与节点参数（进阶实践）</a><ul class="sub-nav"><li><a href="#section-21">1. 先让发布者支持 publish_frequency</a></li><li><a href="#section-22">2. 创建并安装 YAML 文件</a></li><li><a href="#section-23">3. Launch 加载 YAML</a></li></ul></li><li><a class="chapter" href="#section-24">十、模块化启动：IncludeLaunchDescription（选做）</a><ul class="sub-nav"><li><a href="#section-25">1. 子 Launch：publisher.launch.py</a></li><li><a href="#section-26">2. 主 Launch 引入子 Launch</a></li></ul></li><li><a class="chapter" href="#section-27">十一、其他 Launch 机制速览（原讲义进阶内容）</a><ul class="sub-nav"><li><a href="#section-28">1. 常见替换符 Substitutions</a></li><li><a href="#section-29">2. 事件机制 Event handlers</a></li><li><a href="#section-30">3. ComposableNodeContainer：为何本实验不直接使用</a></li></ul></li><li><a class="chapter" href="#section-31">十二、实验检查表与思考题</a></li></ul></nav></aside>
+<div class="mobile-toc"><details><summary>本节目录 · 点击展开</summary><nav aria-label="章节目录" class="toc"><ul><li><a class="chapter" href="#section-1">一、实验目标与 Launch 的作用</a></li><li><a class="chapter" href="#section-2">二、实验目录与上一节代码衔接</a><ul class="sub-nav"><li><a href="#section-3">发布者参考源码（可展开）</a></li><li><a href="#section-4">订阅者参考源码（可展开）</a></li></ul></li><li><a class="chapter" href="#section-5">三、补齐功能包配置（沿用已有模板）</a><ul class="sub-nav"><li><a href="#section-6">1. custom_interfaces：生成消息接口</a></li><li><a href="#section-7">2. 两个 C++ 节点包：注册并安装可执行文件</a></li><li><a href="#section-8">3. robot_status_bringup：安装 Launch 目录</a></li></ul></li><li><a class="chapter" href="#section-9">四、编写第一个能够运行的 Launch 文件</a><ul class="sub-nav"><li><a href="#section-10">1. 核心结构：LaunchDescription 与 Node</a></li><li><a href="#section-11">2. 编译并用 ros2 launch 启动</a></li></ul></li><li><a class="chapter" href="#section-12">五、运行结果与自检</a><ul class="sub-nav"><li><a href="#section-13">1. 另开终端查看节点和消息</a></li><li><a href="#section-14">2. 编译、运行常见问题</a></li></ul></li><li><a class="chapter" href="#section-15">六、Launch 参数与条件启动（必做改进）</a></li><li><a class="chapter" href="#section-16">七、TimerAction：延迟启动与顺序控制</a></li><li><a class="chapter" href="#section-17">八、Node 的常用配置：命名、命名空间和重映射</a><ul class="sub-nav"><li><a href="#section-18">1. 实验：两节点统一重映射</a></li><li><a href="#section-19">2. 选做：GroupAction + PushRosNamespace</a></li></ul></li><li><a class="chapter" href="#section-20">九、参数文件 YAML 与节点参数（进阶实践）</a><ul class="sub-nav"><li><a href="#section-21">1. 先让发布者支持 publish_frequency</a></li><li><a href="#section-22">2. 创建并安装 YAML 文件</a></li><li><a href="#section-23">3. Launch 加载 YAML</a></li></ul></li><li><a class="chapter" href="#section-24">十、模块化启动：IncludeLaunchDescription（选做）</a><ul class="sub-nav"><li><a href="#section-25">1. 子 Launch：publisher.launch.py</a></li><li><a href="#section-26">2. 主 Launch 引入子 Launch</a></li></ul></li><li><a class="chapter" href="#section-27">十一、其他 Launch 机制速览（原讲义进阶内容）</a><ul class="sub-nav"><li><a href="#section-28">1. 常见替换符 Substitutions</a></li><li><a href="#section-29">2. 事件机制 Event handlers</a></li><li><a href="#section-30">3. ComposableNodeContainer：为何本实验不直接使用</a></li></ul></li><li><a class="chapter" href="#section-31">十二、实验检查表与思考题</a></li></ul></nav></details></div>
+<main aria-label="教程正文" class="content"><blockquote class="context-panel"><p><strong>实验范围：</strong> Ubuntu 22.04 + ROS 2 Humble；C++ / rclcpp；ament_cmake + colcon；实验路径 <a href="https://github.com/movoQAQ/nav2026_tutorial/tree/master/lecture2/task2" target="_blank" rel="noopener">lecture2/task2</a>。学生已完成上一节自定义消息通信实验，且仓库已克隆。本节不重新安装 ROS、不创建功能包。</p></blockquote><h2 id="section-1">一、实验目标与 Launch 的作用</h2><p>上一节分别使用 <code>ros2 run</code> 启动发布者与订阅者。本节使用一个 Python Launch 文件统一启动两者，进一步练习 <strong>节点参数、条件启动、延时启动、重映射与模块化引入</strong>。</p><ul><li>理解 <code>generate_launch_description()</code> 与 <code>LaunchDescription</code>、<code>Node</code> 的职责。</li><li>利用已提供的 <code>robot_status_bringup</code> 功能包安装 Launch 文件，并执行 <code>ros2 launch</code>。</li><li>使用 <code>ros2 node</code>、<code>ros2 topic</code> 检查 Launch 结果；知道 Launch 参数与节点参数的区别。</li></ul><blockquote class="context-panel"><p><strong>学习顺序：</strong> 基础实验只需要完成第二至六节；后续为进阶练习和原讲义知识点整理。为了保证能够运行，所有基础代码均使用仓库当前已经存在的真实包名、文件路径及 C++ 可执行程序名。</p></blockquote><h2 id="section-2">二、实验目录与上一节代码衔接</h2><p>在已克隆的仓库中，<code>lecture2/task2</code> 本身就是本次 <code>colcon</code> 工作空间的根目录。当前仓库已经给出四个功能包的模板，<strong>不要再创建同名功能包</strong>：</p><div class="code-block" data-lang="text"><div class="code-toolbar"><span class="code-language">Text</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-1" type="button">复制代码</button></div><div class="highlight"><pre>lecture2/
+├── task1/                             # 上一节已完成的自定义消息实验
+└── task2/                             # 本节 colcon 工作空间
+    └── src/
+        ├── custom_interfaces/
+        │   ├── msg/RobotStatus.msg    # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        ├── robot_status_publisher/
+        │   ├── src/robot_status_publisher.cpp  # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        ├── robot_status_subscriber/
+        │   ├── src/robot_status_subscriber.cpp # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        └── robot_status_bringup/
+            ├── launch/robot_status.launch.py   # 待填写
+            ├── CMakeLists.txt
+            └── package.xml</pre></div><textarea aria-hidden="true" class="copy-source" id="code-1" tabindex="-1">lecture2/
+├── task1/                             # 上一节已完成的自定义消息实验
+└── task2/                             # 本节 colcon 工作空间
+    └── src/
+        ├── custom_interfaces/
+        │   ├── msg/RobotStatus.msg    # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        ├── robot_status_publisher/
+        │   ├── src/robot_status_publisher.cpp  # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        ├── robot_status_subscriber/
+        │   ├── src/robot_status_subscriber.cpp # 待填写
+        │   ├── CMakeLists.txt
+        │   └── package.xml
+        └── robot_status_bringup/
+            ├── launch/robot_status.launch.py   # 待填写
+            ├── CMakeLists.txt
+            └── package.xml
+</textarea></div><p>因为 Task 2 中的 <code>.msg</code>、两个 <code>.cpp</code>、<code>.launch.py</code> 在仓库内为空文件，直接运行 <code>colcon build</code> 并不能完成本实验。<strong>建议先完成 Task 1，再复制上一节的自定义消息与两个 C++ 源文件</strong>；本节重点放在 Launch，而不是重写 Topic 代码。</p><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-2" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">source</span><span class="w"> </span>/opt/ros/humble/setup.bash
+<span class="nb">cd</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2
+
+<span class="c1"># 以下三行以 task1 已经填好源码为前提</span>
+cp<span class="w"> </span>../task1/src/custom_interfaces/msg/RobotStatus.msg<span class="w"> </span>src/custom_interfaces/msg/RobotStatus.msg
+cp<span class="w"> </span>../task1/src/custom_msg_demo/src/robot_status_publisher.cpp<span class="w"> </span>src/robot_status_publisher/src/robot_status_publisher.cpp
+cp<span class="w"> </span>../task1/src/custom_msg_demo/src/robot_status_subscriber.cpp<span class="w"> </span>src/robot_status_subscriber/src/robot_status_subscriber.cpp</pre></div><textarea aria-hidden="true" class="copy-source" id="code-2" tabindex="-1">source /opt/ros/humble/setup.bash
+cd ~/nav2026_tutorial/lecture2/task2
+
+# 以下三行以 task1 已经填好源码为前提
+cp ../task1/src/custom_interfaces/msg/RobotStatus.msg src/custom_interfaces/msg/RobotStatus.msg
+cp ../task1/src/custom_msg_demo/src/robot_status_publisher.cpp src/robot_status_publisher/src/robot_status_publisher.cpp
+cp ../task1/src/custom_msg_demo/src/robot_status_subscriber.cpp src/robot_status_subscriber/src/robot_status_subscriber.cpp
+</textarea></div><blockquote class="context-panel"><p><strong>注意：</strong> 这里的 <code>~/nav2026_tutorial</code> 是示例克隆位置；若在其他目录，请相应更改 <code>cd</code>。三个 <code>cp</code> 命令会覆盖 Task 2 的空白模板。请确认 Task 1 源码已经写完后再执行。</p></blockquote><details class="lesson-details"><summary>可选：查看上一节完整 C++ 发布者与订阅者源码</summary><div class="detail-inner"><p>如果上一节代码尚未填写，可用下面的参考实现补齐 Task 2 的两个源文件。它们使用相同的 <code>custom_interfaces/msg/RobotStatus</code> 消息、相同的相对话题名 <code>robot_status</code>。</p><h3 id="section-3">发布者参考源码（可展开）</h3><div class="code-block" data-lang="cpp"><div class="code-toolbar"><span class="code-language">C++</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-3" type="button">复制代码</button></div><div class="highlight"><pre><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;chrono&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;rclcpp/rclcpp.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;custom_interfaces/msg/robot_status.hpp&quot;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="o">::</span><span class="nn">chrono_literals</span><span class="p">;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RobotStatusPublisher</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">RobotStatusPublisher</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">&quot;robot_status_publisher&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">publisher_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create_publisher</span><span class="o">&lt;</span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">      </span><span class="s">&quot;robot_status&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">timer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create_wall_timer</span><span class="p">(</span>
+<span class="w">      </span><span class="mi">1</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">RobotStatusPublisher</span><span class="o">::</span><span class="n">timer_callback</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">timer_callback</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="w"> </span><span class="n">msg</span><span class="p">;</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">.</span><span class="n">battery_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">87.5f</span><span class="p">;</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">.</span><span class="n">is_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">publisher_</span><span class="o">-&gt;</span><span class="n">publish</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">RCLCPP_INFO</span><span class="p">(</span>
+<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">get_logger</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;发布: id=%d, 电量=%.2f%%, 激活状态=%s&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">msg</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">battery_level</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">is_active</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Publisher</span><span class="o">&lt;</span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="o">&gt;::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">publisher_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">TimerBase</span><span class="o">::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">spin</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">RobotStatusPublisher</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">shutdown</span><span class="p">();</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-3" tabindex="-1">#include &lt;chrono&gt;
+#include &lt;functional&gt;
+#include &lt;memory&gt;
+
+#include &quot;rclcpp/rclcpp.hpp&quot;
+#include &quot;custom_interfaces/msg/robot_status.hpp&quot;
+
+using namespace std::chrono_literals;
+
+class RobotStatusPublisher : public rclcpp::Node
+{
+public:
+  RobotStatusPublisher() : Node(&quot;robot_status_publisher&quot;)
+  {
+    publisher_ = this-&gt;create_publisher&lt;custom_interfaces::msg::RobotStatus&gt;(
+      &quot;robot_status&quot;, 10);
+
+    timer_ = this-&gt;create_wall_timer(
+      1s, std::bind(&amp;RobotStatusPublisher::timer_callback, this));
+  }
+
+private:
+  void timer_callback()
+  {
+    custom_interfaces::msg::RobotStatus msg;
+    msg.id = 1;
+    msg.battery_level = 87.5f;
+    msg.is_active = true;
+
+    publisher_-&gt;publish(msg);
+    RCLCPP_INFO(
+      this-&gt;get_logger(), &quot;发布: id=%d, 电量=%.2f%%, 激活状态=%s&quot;,
+      msg.id, msg.battery_level, msg.is_active ? &quot;true&quot; : &quot;false&quot;);
+  }
+
+  rclcpp::Publisher&lt;custom_interfaces::msg::RobotStatus&gt;::SharedPtr publisher_;
+  rclcpp::TimerBase::SharedPtr timer_;
+};
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared&lt;RobotStatusPublisher&gt;());
+  rclcpp::shutdown();
+  return 0;
+}
+</textarea></div><h3 id="section-4">订阅者参考源码（可展开）</h3><div class="code-block" data-lang="cpp"><div class="code-toolbar"><span class="code-language">C++</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-4" type="button">复制代码</button></div><div class="highlight"><pre><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;rclcpp/rclcpp.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;custom_interfaces/msg/robot_status.hpp&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RobotStatusSubscriber</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">RobotStatusSubscriber</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">&quot;robot_status_subscriber&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">subscription_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create_subscription</span><span class="o">&lt;</span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">      </span><span class="s">&quot;robot_status&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">RobotStatusSubscriber</span><span class="o">::</span><span class="n">topic_callback</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">placeholders</span><span class="o">::</span><span class="n">_1</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">topic_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">RCLCPP_INFO</span><span class="p">(</span>
+<span class="w">      </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">get_logger</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;接收: id=%d, 电量=%.2f%%, 激活状态=%s&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="n">msg</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">battery_level</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">is_active</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Subscription</span><span class="o">&lt;</span><span class="n">custom_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">RobotStatus</span><span class="o">&gt;::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">subscription_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">spin</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">RobotStatusSubscriber</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="w">  </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">shutdown</span><span class="p">();</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-4" tabindex="-1">#include &lt;functional&gt;
+#include &lt;memory&gt;
+
+#include &quot;rclcpp/rclcpp.hpp&quot;
+#include &quot;custom_interfaces/msg/robot_status.hpp&quot;
+
+class RobotStatusSubscriber : public rclcpp::Node
+{
+public:
+  RobotStatusSubscriber() : Node(&quot;robot_status_subscriber&quot;)
+  {
+    subscription_ = this-&gt;create_subscription&lt;custom_interfaces::msg::RobotStatus&gt;(
+      &quot;robot_status&quot;, 10,
+      std::bind(&amp;RobotStatusSubscriber::topic_callback, this, std::placeholders::_1));
+  }
+
+private:
+  void topic_callback(const custom_interfaces::msg::RobotStatus &amp; msg) const
+  {
+    RCLCPP_INFO(
+      this-&gt;get_logger(), &quot;接收: id=%d, 电量=%.2f%%, 激活状态=%s&quot;,
+      msg.id, msg.battery_level, msg.is_active ? &quot;true&quot; : &quot;false&quot;);
+  }
+
+  rclcpp::Subscription&lt;custom_interfaces::msg::RobotStatus&gt;::SharedPtr subscription_;
+};
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared&lt;RobotStatusSubscriber&gt;());
+  rclcpp::shutdown();
+  return 0;
+}
+</textarea></div></div></details><h2 id="section-5">三、补齐功能包配置（沿用已有模板）</h2><h3 id="section-6">1. custom_interfaces：生成消息接口</h3><p>确保 <code>src/custom_interfaces/msg/RobotStatus.msg</code> 为以下内容；从上一节复制成功后无需再次手动填写：</p><div class="code-block" data-lang="rosmsg"><div class="code-toolbar"><span class="code-language">ROS .msg</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-5" type="button">复制代码</button></div><div class="highlight"><pre>int32 id
+float32 battery_level
+bool is_active</pre></div><textarea aria-hidden="true" class="copy-source" id="code-5" tabindex="-1">int32 id
+float32 battery_level
+bool is_active
+</textarea></div><p>在 <code>src/custom_interfaces/CMakeLists.txt</code> 中，<strong>保留原有内容</strong>；在 <code>ament_package()</code> 之前补充下列片段：</p><div class="code-block" data-lang="cmake"><div class="code-toolbar"><span class="code-language">CMake</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-6" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">find_package</span><span class="p">(</span><span class="s">rosidl_default_generators</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span>
+
+<span class="nb">rosidl_generate_interfaces</span><span class="p">(</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="w">  </span><span class="s2">&quot;msg/RobotStatus.msg&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">ament_export_dependencies</span><span class="p">(</span><span class="s">rosidl_default_runtime</span><span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-6" tabindex="-1">find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  &quot;msg/RobotStatus.msg&quot;
+)
+
+ament_export_dependencies(rosidl_default_runtime)
+</textarea></div><p>在 <code>src/custom_interfaces/package.xml</code> 中，将以下依赖与分组声明放在 <code>&lt;package&gt;</code> 内，勿放入 <code>&lt;export&gt;</code> 中：</p><div class="code-block" data-lang="xml"><div class="code-toolbar"><span class="code-language">XML</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-7" type="button">复制代码</button></div><div class="highlight"><pre><span class="nt">&lt;build_depend&gt;</span>rosidl_default_generators<span class="nt">&lt;/build_depend&gt;</span>
+<span class="nt">&lt;exec_depend&gt;</span>rosidl_default_runtime<span class="nt">&lt;/exec_depend&gt;</span>
+<span class="nt">&lt;member_of_group&gt;</span>rosidl_interface_packages<span class="nt">&lt;/member_of_group&gt;</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-7" tabindex="-1">&lt;build_depend&gt;rosidl_default_generators&lt;/build_depend&gt;
+&lt;exec_depend&gt;rosidl_default_runtime&lt;/exec_depend&gt;
+&lt;member_of_group&gt;rosidl_interface_packages&lt;/member_of_group&gt;
+</textarea></div><h3 id="section-7">2. 两个 C++ 节点包：注册并安装可执行文件</h3><p>两个节点包的 <code>package.xml</code> 已有 <code>rclcpp</code> 与 <code>custom_interfaces</code> 依赖。现在分别修改 CMake，在各自 <code>ament_package()</code> 之前补充：</p><p><strong>文件 A：</strong><code>src/robot_status_publisher/CMakeLists.txt</code></p><div class="code-block" data-lang="cmake"><div class="code-toolbar"><span class="code-language">CMake</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-8" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">add_executable</span><span class="p">(</span><span class="s">robot_status_publisher</span><span class="w"> </span><span class="s">src/robot_status_publisher.cpp</span><span class="p">)</span>
+<span class="nb">ament_target_dependencies</span><span class="p">(</span><span class="s">robot_status_publisher</span><span class="w"> </span><span class="s">rclcpp</span><span class="w"> </span><span class="s">custom_interfaces</span><span class="p">)</span>
+
+<span class="nb">install</span><span class="p">(</span><span class="s">TARGETS</span><span class="w"> </span><span class="s">robot_status_publisher</span>
+<span class="w">  </span><span class="s">DESTINATION</span><span class="w"> </span><span class="s">lib/</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-8" tabindex="-1">add_executable(robot_status_publisher src/robot_status_publisher.cpp)
+ament_target_dependencies(robot_status_publisher rclcpp custom_interfaces)
+
+install(TARGETS robot_status_publisher
+  DESTINATION lib/${PROJECT_NAME}
+)
+</textarea></div><p><strong>文件 B：</strong><code>src/robot_status_subscriber/CMakeLists.txt</code></p><div class="code-block" data-lang="cmake"><div class="code-toolbar"><span class="code-language">CMake</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-9" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">add_executable</span><span class="p">(</span><span class="s">robot_status_subscriber</span><span class="w"> </span><span class="s">src/robot_status_subscriber.cpp</span><span class="p">)</span>
+<span class="nb">ament_target_dependencies</span><span class="p">(</span><span class="s">robot_status_subscriber</span><span class="w"> </span><span class="s">rclcpp</span><span class="w"> </span><span class="s">custom_interfaces</span><span class="p">)</span>
+
+<span class="nb">install</span><span class="p">(</span><span class="s">TARGETS</span><span class="w"> </span><span class="s">robot_status_subscriber</span>
+<span class="w">  </span><span class="s">DESTINATION</span><span class="w"> </span><span class="s">lib/</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-9" tabindex="-1">add_executable(robot_status_subscriber src/robot_status_subscriber.cpp)
+ament_target_dependencies(robot_status_subscriber rclcpp custom_interfaces)
+
+install(TARGETS robot_status_subscriber
+  DESTINATION lib/${PROJECT_NAME}
+)
+</textarea></div><blockquote class="context-panel"><p><strong>对应关系：</strong> Launch 中的 <code>package=</code> 是功能包名，<code>executable=</code> 必须与 <code>add_executable()</code> 和 <code>install(TARGETS ...)</code> 中注册的可执行程序一致。</p></blockquote><h3 id="section-8">3. robot_status_bringup：安装 Launch 目录</h3><p>在 <code>src/robot_status_bringup/CMakeLists.txt</code> 的 <code>ament_package()</code> 之前增加：</p><div class="code-block" data-lang="cmake"><div class="code-toolbar"><span class="code-language">CMake</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-10" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">install</span><span class="p">(</span><span class="s">DIRECTORY</span><span class="w"> </span><span class="s">launch</span>
+<span class="w">  </span><span class="s">DESTINATION</span><span class="w"> </span><span class="s">share/</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-10" tabindex="-1">install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
+</textarea></div><p>其 <code>package.xml</code> 已经列出 <code>launch</code>、<code>launch_ros</code>、<code>robot_status_publisher</code> 和 <code>robot_status_subscriber</code>，本阶段保留即可。<strong>Launch 文件放在 bringup 包，不放在发布者包。</strong></p><h2 id="section-9">四、编写第一个能够运行的 Launch 文件</h2><h3 id="section-10">1. 核心结构：LaunchDescription 与 Node</h3><p>编辑 <code>src/robot_status_bringup/launch/robot_status.launch.py</code>，写入以下完整代码：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-11" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchDescription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch_ros.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_launch_description</span><span class="p">():</span>
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">subscriber</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span><span class="n">publisher</span><span class="p">,</span> <span class="n">subscriber</span><span class="p">])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-11" tabindex="-1">from launch import LaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    publisher = Node(
+        package=&#x27;robot_status_publisher&#x27;,
+        executable=&#x27;robot_status_publisher&#x27;,
+        name=&#x27;robot_status_publisher&#x27;,
+        output=&#x27;screen&#x27;,
+    )
+
+    subscriber = Node(
+        package=&#x27;robot_status_subscriber&#x27;,
+        executable=&#x27;robot_status_subscriber&#x27;,
+        name=&#x27;robot_status_subscriber&#x27;,
+        output=&#x27;screen&#x27;,
+    )
+
+    return LaunchDescription([publisher, subscriber])
+</textarea></div><table><thead><tr><th>关键对象</th><th>作用</th><th>本实验体现</th></tr></thead><tbody><tr><td><code>generate_launch_description()</code></td><td>Python Launch 入口函数</td><td>返回待启动的动作列表</td></tr><tr><td><code>LaunchDescription</code></td><td>声明一次启动包含哪些动作</td><td>同时启动发布者与订阅者</td></tr><tr><td><code>Node</code></td><td>声明 ROS 2 节点进程</td><td>包名、可执行程序名、显示名</td></tr><tr><td><code>output="screen"</code></td><td>将进程输出显示到终端</td><td>课堂观察发送/接收日志</td></tr></tbody></table><h3 id="section-11">2. 编译并用 ros2 launch 启动</h3><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-12" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">cd</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2
+colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--packages-up-to<span class="w"> </span>robot_status_bringup
+<span class="nb">source</span><span class="w"> </span>install/setup.bash
+ros2<span class="w"> </span>launch<span class="w"> </span>robot_status_bringup<span class="w"> </span>robot_status.launch.py</pre></div><textarea aria-hidden="true" class="copy-source" id="code-12" tabindex="-1">cd ~/nav2026_tutorial/lecture2/task2
+colcon build --symlink-install --packages-up-to robot_status_bringup
+source install/setup.bash
+ros2 launch robot_status_bringup robot_status.launch.py
+</textarea></div><p>预期可观察到两个节点进程启动，并反复出现 <code>发布: id=1 ...</code> 和 <code>接收: id=1 ...</code> 等日志。<strong>此处消息值取决于你上一节写的 C++ 程序，不要求所有人的电量字段一致。</strong> 按 <code>Ctrl+C</code> 终止 Launch。</p><h2 id="section-12">五、运行结果与自检</h2><h3 id="section-13">1. 另开终端查看节点和消息</h3><p>保持 Launch 运行，另开终端执行：</p><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-13" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">source</span><span class="w"> </span>/opt/ros/humble/setup.bash
+<span class="nb">source</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2/install/setup.bash
+ros2<span class="w"> </span>node<span class="w"> </span>list
+ros2<span class="w"> </span>topic<span class="w"> </span>list
+ros2<span class="w"> </span>topic<span class="w"> </span><span class="nb">type</span><span class="w"> </span>/robot_status
+ros2<span class="w"> </span>topic<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>/robot_status
+ros2<span class="w"> </span>topic<span class="w"> </span>info<span class="w"> </span>/robot_status<span class="w"> </span>--verbose</pre></div><textarea aria-hidden="true" class="copy-source" id="code-13" tabindex="-1">source /opt/ros/humble/setup.bash
+source ~/nav2026_tutorial/lecture2/task2/install/setup.bash
+ros2 node list
+ros2 topic list
+ros2 topic type /robot_status
+ros2 topic echo /robot_status
+ros2 topic info /robot_status --verbose
+</textarea></div><p>若沿用上节程序，<code>ros2 topic type /robot_status</code> 应返回 <code>custom_interfaces/msg/RobotStatus</code>；<code>topic info</code> 应观察到一个发布端与一个订阅端。也可选做 <code>rqt_graph</code> 绘制节点连接。</p><h3 id="section-14">2. 编译、运行常见问题</h3><table><thead><tr><th>表现</th><th>优先检查</th></tr></thead><tbody><tr><td><code>Package not found</code></td><td>是否进入 task2 工作空间并 <code>source install/setup.bash</code></td></tr><tr><td><code>executable not found</code></td><td>节点包中 <code>add_executable</code>、<code>install(TARGETS ...)</code> 是否齐全</td></tr><tr><td><code>file not found in the share directory</code></td><td>bringup 包是否安装 <code>launch</code> 目录并重新编译</td></tr><tr><td><code>Unknown package custom_interfaces</code> 或接口头文件找不到</td><td>检查 <code>rosidl_generate_interfaces</code>、<code>package.xml</code> 分组声明、构建日志</td></tr><tr><td>能启动但没有话题</td><td>源文件是否为空、发布者是否真的创建 <code>robot_status</code> 发布器</td></tr></tbody></table><h2 id="section-15">六、Launch 参数与条件启动（必做改进）</h2><p>将 Launch 配置为：始终启动发布者，订阅者是否启动由命令行参数 <code>use_subscriber</code> 决定。<strong>用以下完整代码替换第四节的 Launch 文件。</strong></p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-14" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchDescription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclareLaunchArgument</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IfCondition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.substitutions</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchConfiguration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch_ros.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_launch_description</span><span class="p">():</span>
+    <span class="n">use_subscriber</span> <span class="o">=</span> <span class="n">LaunchConfiguration</span><span class="p">(</span><span class="s1">&#39;use_subscriber&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span>
+        <span class="n">DeclareLaunchArgument</span><span class="p">(</span>
+            <span class="s1">&#39;use_subscriber&#39;</span><span class="p">,</span>
+            <span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;true&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether to launch the subscriber&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">Node</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">Node</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">IfCondition</span><span class="p">(</span><span class="n">use_subscriber</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-14" tabindex="-1">from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    use_subscriber = LaunchConfiguration(&#x27;use_subscriber&#x27;)
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            &#x27;use_subscriber&#x27;,
+            default_value=&#x27;true&#x27;,
+            description=&#x27;Whether to launch the subscriber&#x27;,
+        ),
+        Node(
+            package=&#x27;robot_status_publisher&#x27;,
+            executable=&#x27;robot_status_publisher&#x27;,
+            name=&#x27;robot_status_publisher&#x27;,
+            output=&#x27;screen&#x27;,
+        ),
+        Node(
+            package=&#x27;robot_status_subscriber&#x27;,
+            executable=&#x27;robot_status_subscriber&#x27;,
+            name=&#x27;robot_status_subscriber&#x27;,
+            output=&#x27;screen&#x27;,
+            condition=IfCondition(use_subscriber),
+        ),
+    ])
+</textarea></div><p>完成修改后重新编译并分别测试：</p><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-15" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">cd</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2
+colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--packages-select<span class="w"> </span>robot_status_bringup
+<span class="nb">source</span><span class="w"> </span>install/setup.bash
+
+<span class="c1"># 查看可用 Launch 参数</span>
+ros2<span class="w"> </span>launch<span class="w"> </span>robot_status_bringup<span class="w"> </span>robot_status.launch.py<span class="w"> </span>--show-args
+
+<span class="c1"># 默认启动发布者 + 订阅者</span>
+ros2<span class="w"> </span>launch<span class="w"> </span>robot_status_bringup<span class="w"> </span>robot_status.launch.py
+
+<span class="c1"># 关闭订阅者（Ctrl+C 退出上一条命令后运行）</span>
+ros2<span class="w"> </span>launch<span class="w"> </span>robot_status_bringup<span class="w"> </span>robot_status.launch.py<span class="w"> </span>use_subscriber:<span class="o">=</span><span class="nb">false</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-15" tabindex="-1">cd ~/nav2026_tutorial/lecture2/task2
+colcon build --symlink-install --packages-select robot_status_bringup
+source install/setup.bash
+
+# 查看可用 Launch 参数
+ros2 launch robot_status_bringup robot_status.launch.py --show-args
+
+# 默认启动发布者 + 订阅者
+ros2 launch robot_status_bringup robot_status.launch.py
+
+# 关闭订阅者（Ctrl+C 退出上一条命令后运行）
+ros2 launch robot_status_bringup robot_status.launch.py use_subscriber:=false
+</textarea></div><p><code>DeclareLaunchArgument</code> 声明参数及默认值；<code>LaunchConfiguration</code> 表示运行时读取该参数，并不是马上读取到普通 Python 字符串；<code>IfCondition</code> 根据解析后的值决定是否启动节点。反向条件可使用 <code>UnlessCondition</code>。</p><h2 id="section-16">七、TimerAction：延迟启动与顺序控制</h2><p>需求：订阅者立即启动，发布者延迟 2 秒启动。在第六节的文件中添加导入 <code>TimerAction</code>，再把 <strong>发布者的 Node 动作</strong> 包进 TimerAction。以下是可直接替换的完整版本：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-16" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchDescription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclareLaunchArgument</span><span class="p">,</span> <span class="n">TimerAction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IfCondition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.substitutions</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchConfiguration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch_ros.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_launch_description</span><span class="p">():</span>
+    <span class="n">use_subscriber</span> <span class="o">=</span> <span class="n">LaunchConfiguration</span><span class="p">(</span><span class="s1">&#39;use_subscriber&#39;</span><span class="p">)</span>
+
+    <span class="n">publisher</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subscriber</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+        <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+        <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+        <span class="n">condition</span><span class="o">=</span><span class="n">IfCondition</span><span class="p">(</span><span class="n">use_subscriber</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span>
+        <span class="n">DeclareLaunchArgument</span><span class="p">(</span><span class="s1">&#39;use_subscriber&#39;</span><span class="p">,</span> <span class="n">default_value</span><span class="o">=</span><span class="s1">&#39;true&#39;</span><span class="p">),</span>
+        <span class="n">subscriber</span><span class="p">,</span>
+        <span class="n">TimerAction</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="p">[</span><span class="n">publisher</span><span class="p">]),</span>
+    <span class="p">])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-16" tabindex="-1">from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, TimerAction
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    use_subscriber = LaunchConfiguration(&#x27;use_subscriber&#x27;)
+
+    publisher = Node(
+        package=&#x27;robot_status_publisher&#x27;,
+        executable=&#x27;robot_status_publisher&#x27;,
+        output=&#x27;screen&#x27;,
+    )
+    subscriber = Node(
+        package=&#x27;robot_status_subscriber&#x27;,
+        executable=&#x27;robot_status_subscriber&#x27;,
+        output=&#x27;screen&#x27;,
+        condition=IfCondition(use_subscriber),
+    )
+
+    return LaunchDescription([
+        DeclareLaunchArgument(&#x27;use_subscriber&#x27;, default_value=&#x27;true&#x27;),
+        subscriber,
+        TimerAction(period=2.0, actions=[publisher]),
+    ])
+</textarea></div><p>运行同一个 <code>ros2 launch robot_status_bringup robot_status.launch.py</code>，观察前 2 秒只有订阅者存在，随后发布者启动并开始发送数据。<strong>TimerAction 是计时后触发动作，不会阻塞其他动作；它也不保证业务上的“节点准备就绪”。</strong></p><h2 id="section-17">八、Node 的常用配置：命名、命名空间和重映射</h2><table><thead><tr><th>字段</th><th>用途</th><th>示例</th></tr></thead><tbody><tr><td><code>package</code></td><td>定位 ROS 2 功能包</td><td><code>robot_status_publisher</code></td></tr><tr><td><code>executable</code></td><td>可执行文件名</td><td><code>robot_status_publisher</code></td></tr><tr><td><code>name</code></td><td>运行时节点名称</td><td><code>status_pub</code></td></tr><tr><td><code>namespace</code></td><td>设置节点命名空间</td><td><code>robot1</code></td></tr><tr><td><code>remappings</code></td><td>把原始话题或服务名映射到新名字</td><td><code>("robot_status", "status")</code></td></tr><tr><td><code>parameters</code></td><td>传递 ROS 参数或参数文件</td><td><code>[params_path]</code></td></tr><tr><td><code>arguments</code></td><td>程序命令行参数（并非 ROS 参数）</td><td><code>["--help"]</code></td></tr><tr><td><code>output</code></td><td>启动进程的日志显示位置</td><td><code>"screen"</code></td></tr></tbody></table><h3 id="section-18">1. 实验：两节点统一重映射</h3><p>你可以临时把第四节的两个 <code>Node</code> 都改为带以下配置（仅展示 Node，其他 Launch 结构保持不变）：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-17" type="button">复制代码</button></div><div class="highlight"><pre><span class="n">publisher</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+    <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+    <span class="n">remappings</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;robot_status&#39;</span><span class="p">,</span> <span class="s1">&#39;robot_status_debug&#39;</span><span class="p">)],</span>
+    <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">subscriber</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+    <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span>
+    <span class="n">remappings</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;robot_status&#39;</span><span class="p">,</span> <span class="s1">&#39;robot_status_debug&#39;</span><span class="p">)],</span>
+    <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-17" tabindex="-1">publisher = Node(
+    package=&#x27;robot_status_publisher&#x27;,
+    executable=&#x27;robot_status_publisher&#x27;,
+    remappings=[(&#x27;robot_status&#x27;, &#x27;robot_status_debug&#x27;)],
+    output=&#x27;screen&#x27;,
+)
+subscriber = Node(
+    package=&#x27;robot_status_subscriber&#x27;,
+    executable=&#x27;robot_status_subscriber&#x27;,
+    remappings=[(&#x27;robot_status&#x27;, &#x27;robot_status_debug&#x27;)],
+    output=&#x27;screen&#x27;,
+)
+</textarea></div><p>两者都重映射后，应使用 <code>ros2 topic echo /robot_status_debug</code> 验证；只改一个节点可能导致双方不再通信。</p><h3 id="section-19">2. 选做：GroupAction + PushRosNamespace</h3><p>把多个动作放进同一个分组，统一设置 <code>/robot1</code> 命名空间：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-18" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">GroupAction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch_ros.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">PushRosNamespace</span>
+
+<span class="n">robot_group</span> <span class="o">=</span> <span class="n">GroupAction</span><span class="p">(</span><span class="n">actions</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">PushRosNamespace</span><span class="p">(</span><span class="s1">&#39;robot1&#39;</span><span class="p">),</span>
+    <span class="n">Node</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">),</span>
+    <span class="n">Node</span><span class="p">(</span><span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_subscriber&#39;</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="c1"># 在 generate_launch_description() 中：</span>
+<span class="c1"># return LaunchDescription([robot_group])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-18" tabindex="-1">from launch.actions import GroupAction
+from launch_ros.actions import Node, PushRosNamespace
+
+robot_group = GroupAction(actions=[
+    PushRosNamespace(&#x27;robot1&#x27;),
+    Node(package=&#x27;robot_status_publisher&#x27;, executable=&#x27;robot_status_publisher&#x27;),
+    Node(package=&#x27;robot_status_subscriber&#x27;, executable=&#x27;robot_status_subscriber&#x27;),
+])
+# 在 generate_launch_description() 中：
+# return LaunchDescription([robot_group])
+</textarea></div><p>两段 C++ 都使用相对话题名 <code>robot_status</code> 时，最终话题为 <code>/robot1/robot_status</code>。如果 C++ 中把话题写死为 <code>/robot_status</code>（绝对路径），命名空间不会自动改变它。</p><h2 id="section-20">九、参数文件 YAML 与节点参数（进阶实践）</h2><p>Launch 文件有两类容易混淆的“参数”：<strong>Launch 参数</strong>（如 <code>use_subscriber</code>）决定如何组织启动；<strong>ROS 节点参数</strong>（如 <code>publish_frequency</code>）改变节点自身行为，后者需要 C++ 节点主动声明、读取或处理。</p><h3 id="section-21">1. 先让发布者支持 publish_frequency</h3><p>上一节的发布者使用固定 <code>1s</code> 定时器，没有声明 <code>publish_frequency</code>。请在发布者的构造函数中，将原本的定时器创建部分替换为：</p><div class="code-block" data-lang="cpp"><div class="code-toolbar"><span class="code-language">C++</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-19" type="button">复制代码</button></div><div class="highlight"><pre><span class="c1">// 其余 publisher_ 和 timer_callback() 代码保持不变</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">hz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">declare_parameter</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;publish_frequency&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">safe_hz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hz</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">hz</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">period</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">safe_hz</span><span class="p">);</span>
+
+<span class="n">timer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create_wall_timer</span><span class="p">(</span>
+<span class="w">  </span><span class="n">period</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">RobotStatusPublisher</span><span class="o">::</span><span class="n">timer_callback</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">));</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-19" tabindex="-1">// 其余 publisher_ 和 timer_callback() 代码保持不变
+const double hz = this-&gt;declare_parameter&lt;double&gt;(&quot;publish_frequency&quot;, 1.0);
+const double safe_hz = hz &gt; 0.0 ? hz : 1.0;
+const auto period = std::chrono::duration&lt;double&gt;(1.0 / safe_hz);
+
+timer_ = this-&gt;create_wall_timer(
+  period, std::bind(&amp;RobotStatusPublisher::timer_callback, this));
+</textarea></div><p>发布者的源文件已有 <code>#include &lt;chrono&gt;</code> 与 <code>#include &lt;functional&gt;</code>，因此这里无需增加新的头文件。这个例子在启动时读取一次频率参数，并不实现运行中动态调整定时器。</p><h3 id="section-22">2. 创建并安装 YAML 文件</h3><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-20" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">cd</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2
+mkdir<span class="w"> </span>-p<span class="w"> </span>src/robot_status_bringup/config
+<span class="c1"># 使用编辑器创建 config/params.yaml</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-20" tabindex="-1">cd ~/nav2026_tutorial/lecture2/task2
+mkdir -p src/robot_status_bringup/config
+# 使用编辑器创建 config/params.yaml
+</textarea></div><p>在 <code>src/robot_status_bringup/config/params.yaml</code> 写入：</p><div class="code-block" data-lang="yaml"><div class="code-toolbar"><span class="code-language">YAML</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-21" type="button">复制代码</button></div><div class="highlight"><pre><span class="nt">robot_status_publisher</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ros__parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">publish_frequency</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-21" tabindex="-1">robot_status_publisher:
+  ros__parameters:
+    publish_frequency: 2.0
+</textarea></div><p>原先 bringup 的安装规则只包含 <code>launch</code>。现在将它<strong>改为</strong>下面这一条（不要重复保留两套相同安装规则）：</p><div class="code-block" data-lang="cmake"><div class="code-toolbar"><span class="code-language">CMake</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-22" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">install</span><span class="p">(</span><span class="s">DIRECTORY</span><span class="w"> </span><span class="s">launch</span><span class="w"> </span><span class="s">config</span>
+<span class="w">  </span><span class="s">DESTINATION</span><span class="w"> </span><span class="s">share/</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-22" tabindex="-1">install(DIRECTORY launch config
+  DESTINATION share/${PROJECT_NAME}
+)
+</textarea></div><h3 id="section-23">3. Launch 加载 YAML</h3><p>在 <code>robot_status.launch.py</code> 头部加入 <code>os</code> 与 <code>get_package_share_directory</code>；在 <code>generate_launch_description()</code> 中指定安装后的配置文件路径，并给发布者的 <code>Node</code> 添加 <code>parameters=[params_path]</code>：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-23" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ament_index_python.packages</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_package_share_directory</span>
+
+<span class="c1"># 下列代码放在 generate_launch_description() 内</span>
+<span class="n">pkg_share</span> <span class="o">=</span> <span class="n">get_package_share_directory</span><span class="p">(</span><span class="s1">&#39;robot_status_bringup&#39;</span><span class="p">)</span>
+<span class="n">params_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pkg_share</span><span class="p">,</span> <span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="s1">&#39;params.yaml&#39;</span><span class="p">)</span>
+
+<span class="n">publisher</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span>
+    <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+    <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">params_path</span><span class="p">],</span>
+    <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+<span class="p">)</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-23" tabindex="-1">import os
+from ament_index_python.packages import get_package_share_directory
+
+# 下列代码放在 generate_launch_description() 内
+pkg_share = get_package_share_directory(&#x27;robot_status_bringup&#x27;)
+params_path = os.path.join(pkg_share, &#x27;config&#x27;, &#x27;params.yaml&#x27;)
+
+publisher = Node(
+    package=&#x27;robot_status_publisher&#x27;,
+    executable=&#x27;robot_status_publisher&#x27;,
+    name=&#x27;robot_status_publisher&#x27;,
+    parameters=[params_path],
+    output=&#x27;screen&#x27;,
+)
+</textarea></div><p>重新编译两个涉及改动的包，并启动 Launch 后，执行 <code>ros2 param get /robot_status_publisher publish_frequency</code>；如果成功，值为 <code>2.0</code>，消息发布频率应约为 2 Hz。若频率没有变化，先确认定时器确实读取了参数，而不只是写了 YAML。</p><div class="code-block" data-lang="bash"><div class="code-toolbar"><span class="code-language">Bash</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-24" type="button">复制代码</button></div><div class="highlight"><pre><span class="nb">cd</span><span class="w"> </span>~/nav2026_tutorial/lecture2/task2
+colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--packages-up-to<span class="w"> </span>robot_status_bringup
+<span class="nb">source</span><span class="w"> </span>install/setup.bash
+ros2<span class="w"> </span>launch<span class="w"> </span>robot_status_bringup<span class="w"> </span>robot_status.launch.py
+
+<span class="c1"># 另一个终端执行（先 source 工作空间）：</span>
+<span class="c1"># ros2 param get /robot_status_publisher publish_frequency</span>
+<span class="c1"># ros2 topic hz /robot_status</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-24" tabindex="-1">cd ~/nav2026_tutorial/lecture2/task2
+colcon build --symlink-install --packages-up-to robot_status_bringup
+source install/setup.bash
+ros2 launch robot_status_bringup robot_status.launch.py
+
+# 另一个终端执行（先 source 工作空间）：
+# ros2 param get /robot_status_publisher publish_frequency
+# ros2 topic hz /robot_status
+</textarea></div><h2 id="section-24">十、模块化启动：IncludeLaunchDescription（选做）</h2><p>当项目规模较大时，可以把发布者启动拆成一个子 Launch，再由主 Launch 引用。此例是演示组合关系，不应与主文件中原有的 publisher 再次同时启动，否则会出现重复进程。</p><h3 id="section-25">1. 子 Launch：publisher.launch.py</h3><p>在 <code>src/robot_status_bringup/launch/publisher.launch.py</code> 新建文件：</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-25" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LaunchDescription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch_ros.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_launch_description</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">LaunchDescription</span><span class="p">([</span>
+        <span class="n">Node</span><span class="p">(</span>
+            <span class="n">package</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+            <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;robot_status_publisher&#39;</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="s1">&#39;screen&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-25" tabindex="-1">from launch import LaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package=&#x27;robot_status_publisher&#x27;,
+            executable=&#x27;robot_status_publisher&#x27;,
+            output=&#x27;screen&#x27;,
+        )
+    ])
+</textarea></div><h3 id="section-26">2. 主 Launch 引入子 Launch</h3><p>在主 Launch 中，用下列 <code>IncludeLaunchDescription</code> 替代原本直接启动的 publisher 动作（不要重复启动）。</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-26" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ament_index_python.packages</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_package_share_directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IncludeLaunchDescription</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.launch_description_sources</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonLaunchDescriptionSource</span>
+
+<span class="c1"># 放在 generate_launch_description() 内</span>
+<span class="n">share_dir</span> <span class="o">=</span> <span class="n">get_package_share_directory</span><span class="p">(</span><span class="s1">&#39;robot_status_bringup&#39;</span><span class="p">)</span>
+<span class="n">child</span> <span class="o">=</span> <span class="n">IncludeLaunchDescription</span><span class="p">(</span>
+    <span class="n">PythonLaunchDescriptionSource</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">share_dir</span><span class="p">,</span> <span class="s1">&#39;launch&#39;</span><span class="p">,</span> <span class="s1">&#39;publisher.launch.py&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># 在 LaunchDescription([...]) 中放入 child 和 subscriber</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-26" tabindex="-1">import os
+from ament_index_python.packages import get_package_share_directory
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+# 放在 generate_launch_description() 内
+share_dir = get_package_share_directory(&#x27;robot_status_bringup&#x27;)
+child = IncludeLaunchDescription(
+    PythonLaunchDescriptionSource(
+        os.path.join(share_dir, &#x27;launch&#x27;, &#x27;publisher.launch.py&#x27;)
+    )
+)
+# 在 LaunchDescription([...]) 中放入 child 和 subscriber
+</textarea></div><p>子 Launch 需要接受父 Launch 参数时，可使用 <code>launch_arguments={"key": value}.items()</code> 传递，子文件内使用 <code>DeclareLaunchArgument</code> 和 <code>LaunchConfiguration</code> 声明/读取。</p><h2 id="section-27">十一、其他 Launch 机制速览（原讲义进阶内容）</h2><h3 id="section-28">1. 常见替换符 Substitutions</h3><table><thead><tr><th>名称</th><th>作用与注意点</th></tr></thead><tbody><tr><td><code>LaunchConfiguration</code></td><td>引用启动时的 Launch 参数；需在 Launch 上下文中解析，不是立即返回字符串</td></tr><tr><td><code>PathJoinSubstitution</code></td><td>拼接文件路径，支持其他替换符作为路径片段</td></tr><tr><td><code>FindExecutable</code></td><td>查询 PATH 上的程序，可用于 ExecuteProcess</td></tr><tr><td><code>Command</code></td><td>在 Launch 运行期执行外部命令并取其输出；可能阻塞启动</td></tr><tr><td><code>TextSubstitution</code></td><td>提供静态文本以便与其他替换符组合</td></tr><tr><td><code>PythonExpression</code></td><td>计算简单表达式；不要直接执行不可信的输入</td></tr><tr><td><code>EnvironmentVariable</code></td><td>读取环境变量及可选的默认值</td></tr></tbody></table><h3 id="section-29">2. 事件机制 Event handlers</h3><p><code>OnProcessStart</code> 可以响应进程启动，<code>OnProcessExit</code> 可以响应进程退出。下面是 API 结构示意：发布者退出后，再启动订阅者（只是为了理解事件，不是本实验推荐的正常启动方案）。</p><div class="code-block" data-lang="python"><div class="code-toolbar"><span class="code-language">Python · Launch</span><button aria-label="复制代码" class="copy-button" data-copy-target="code-27" type="button">复制代码</button></div><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">launch.actions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegisterEventHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">launch.event_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OnProcessExit</span>
+
+<span class="n">handler</span> <span class="o">=</span> <span class="n">RegisterEventHandler</span><span class="p">(</span>
+    <span class="n">OnProcessExit</span><span class="p">(</span><span class="n">target_action</span><span class="o">=</span><span class="n">publisher</span><span class="p">,</span> <span class="n">on_exit</span><span class="o">=</span><span class="p">[</span><span class="n">subscriber</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="c1"># 与 publisher 一起放入 LaunchDescription([publisher, handler])</span></pre></div><textarea aria-hidden="true" class="copy-source" id="code-27" tabindex="-1">from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessExit
+
+handler = RegisterEventHandler(
+    OnProcessExit(target_action=publisher, on_exit=[subscriber])
+)
+# 与 publisher 一起放入 LaunchDescription([publisher, handler])
+</textarea></div><p><strong>注意：</strong><code>OnProcessStart</code> 也不等于 ROS 节点完成初始化或传感器准备就绪；<code>OnProcessExit</code> 通常会在正常退出或异常退出后触发，需要根据业务决定是否启动后续动作。</p><h3 id="section-30">3. ComposableNodeContainer：为何本实验不直接使用</h3><p>原讲义中的 <code>ComposableNodeContainer</code>、<code>ComposableNode</code> 和 <code>LoadComposableNodes</code> 属于组件化部署：多个注册为组件插件的 C++ 节点可以加载进一个进程。其典型写法是创建 <code>component_container</code>，并指定 <code>ComposableNode(package=..., plugin=...)</code>。</p><p><strong>本仓库发布者/订阅者目前是普通 <code>add_executable()</code> 生成的独立进程</strong>，尚未编写并注册 <code>rclcpp_components</code> 插件，因此<strong>不能仅把 <code>Node</code> 改成 <code>ComposableNode</code> 就直接运行</strong>。此知识点保留作阅读扩展，不作为本次实验提交要求。</p><h2 id="section-31">十二、实验检查表与思考题</h2><ul><li><strong>基础：</strong>四个功能包可编译；<code>ros2 launch robot_status_bringup robot_status.launch.py</code> 能启动发布者/订阅者；<code>ros2 topic echo /robot_status</code> 有输出。</li><li><strong>条件启动：</strong><code>use_subscriber:=false</code> 时不启动订阅者，能解释为什么话题仍可能存在。</li><li><strong>延时：</strong>能够演示 <code>TimerAction</code> 延迟发布者启动，并说明它不是节点就绪检测。</li><li><strong>选做：</strong>双节点重映射、命名空间、YAML 参数、Include 子 Launch 任意完成一项。</li></ul><ol><li><code>LaunchDescription</code> 中排列两个 <code>Node</code>，是否意味着第二个节点一定等第一个完全准备好后才启动？</li><li>为什么只修改订阅者的 <code>remappings</code>，可能会导致它收不到消息？</li><li>Launch 参数 <code>use_subscriber</code> 与节点参数 <code>publish_frequency</code> 分别由谁读取？</li><li>为什么 <code>robot_status_bringup</code> 需要安装 <code>launch</code> 目录，而不只是把 <code>.launch.py</code> 放在源码目录？</li></ol><div class="chapter-footer">ROS 2 Humble · Lecture 02 · Launch 实践（5.1）</div></main></div>
+<script>
+(function() {
+  document.querySelectorAll('.copy-button').forEach(button => {
+    button.addEventListener('click', async () => {
+      const source = document.getElementById(button.dataset.copyTarget);
+      const content = source ? source.value : '';
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(content);
+        } else {
+          source.style.opacity='1'; source.style.pointerEvents='auto';
+          source.select(); document.execCommand('copy');
+          source.style.opacity='0'; source.style.pointerEvents='none';
+          window.getSelection()?.removeAllRanges();
+        }
+        button.textContent='已复制';button.classList.add('copied');
+        setTimeout(()=>{button.textContent='复制代码';button.classList.remove('copied')},1600);
+      } catch (err) { button.textContent='请手动选择代码'; }
+    });
+  });
+  const links=[...document.querySelectorAll('.toc a')];
+  const heads=[...document.querySelectorAll('.content h2, .content h3')];
+  if('IntersectionObserver' in window) {
+    let active='';
+    const observer=new IntersectionObserver(entries => {
+      const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+      if (!visible.length) return;
+      active=visible[0].target.id;
+      links.forEach(link=>link.classList.toggle('active',link.getAttribute('href')==='#'+active));
+    },{rootMargin:'-5% 0px -82% 0px'});
+    heads.forEach(h=>observer.observe(h));
+  }
+})();
+</script>
+</body>
+</html>

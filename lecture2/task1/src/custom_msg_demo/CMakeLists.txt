@@ -10,6 +10,18 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 
+add_executable(robot_status_publisher src/robot_status_publisher.cpp)
+ament_target_dependencies(robot_status_publisher rclcpp custom_interfaces)
+
+add_executable(robot_status_subscriber src/robot_status_subscriber.cpp)
+ament_target_dependencies(robot_status_subscriber rclcpp custom_interfaces)
+
+install(TARGETS
+  robot_status_publisher
+  robot_status_subscriber
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

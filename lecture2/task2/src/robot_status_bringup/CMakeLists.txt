@@ -12,6 +12,10 @@ find_package(launch_ros REQUIRED)
 find_package(robot_status_publisher REQUIRED)
 find_package(robot_status_subscriber REQUIRED)
 
+install(DIRECTORY launch config
+  DESTINATION share/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
